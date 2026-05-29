@@ -107,12 +107,12 @@
 
 参数齐全后，一行说明计划（"我将基于 N 篇文献，以[主题]为综述主题，按[组织方式]生成综述"），然后加载对应技能文件执行：
 
-- 文献综述 → `src/skills/lit-review/SKILL.md`
-- 文本精读 → `src/skills/close-reading/SKILL.md`
-- 润色或中英转写 → `src/skills/polish/SKILL.md`
-- 稿件评阅 → `src/skills/review/SKILL.md`
+- 文献综述 → `.miwrite/skills/lit-review/SKILL.md`
+- 文本精读 → `.miwrite/skills/close-reading/SKILL.md`
+- 润色或中英转写 → `.miwrite/skills/polish/SKILL.md`
+- 稿件评阅 → `.miwrite/skills/review/SKILL.md`
 
-（Codex/Cursor 用户：AI 会直接读取上述路径的 SKILL.md 文件。Claude Code 用户：技能通过 `.claude/skills/` 自动发现，上述路径仅作参考。）
+（上述路径通过 `.miwrite/` 目录的符号链接解析。Claude Code 用户通过 `.claude/skills/` 自动发现，无需关注这些路径。）
 
 如果用户只是进行学术相关的对话（非上述专项任务），按通用规则直接回答即可。
 

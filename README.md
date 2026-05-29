@@ -13,89 +13,67 @@
 
 ## 快速安装
 
-> 需要 bash/zsh 环境。Windows 用户请用 Git Bash 或 WSL。PowerShell 用户可参考各命令的等价操作。
-
-所有方式都先克隆仓库：
-
-```bash
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-```
-
-然后在你的**项目目录**下执行对应工具的安装命令。安装过程不修改、不覆盖、不备份目标项目的任何现有文件。
+> 需要 bash/zsh 环境。Windows 用户请用 Git Bash 或 WSL。
 
 ### Claude Code
 
-Claude Code 通过 `.claude/skills/<name>/SKILL.md` 自动发现技能，通过 `@` 语法导入上下文文件。
+```bash
+git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
+cd your-project
+bash ~/.miwrite-skill/install-claude.sh
+```
+
+安装内容：
+- `.claude/skills/*/SKILL.md` — 4 个技能的符号链接（Claude Code 自动发现）
+- `CLAUDE.md` — 添加一行 `@~/.miwrite-skill/AGENTS.md` 导入通用规则
+
+### Codex CLI / Cursor
 
 ```bash
-# 在 .claude/skills/ 下创建符号链接（不覆盖已有内容）
-mkdir -p .claude/skills
-ln -snf ~/.miwrite-skill/skills/lit-review .claude/skills/lit-review
-ln -snf ~/.miwrite-skill/skills/close-reading .claude/skills/close-reading
-ln -snf ~/.miwrite-skill/skills/polish .claude/skills/polish
-ln -snf ~/.miwrite-skill/skills/review .claude/skills/review
-
-# 在 CLAUDE.md 中添加一行导入（如果已有 CLAUDE.md 则追加）
-echo '@~/.miwrite-skill/AGENTS.md' >> CLAUDE.md
+git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
+cd your-project
+bash ~/.miwrite-skill/install-codex.sh
 ```
 
-Claude Code 会自动发现 `.claude/skills/` 下的 4 个技能，并通过 `@` 导入加载 AGENTS.md 通用规则。
+安装内容：
+- `AGENTS.md` — 扁平、自包含的通用规则（Codex 原生读取，无 @import）
+- `src/skills/` — 符号链接到技能文件
 
-### Codex CLI
-
-Codex 读取项目根目录的 `AGENTS.md`。
-
-```bash
-# 在 .miwrite/ 下创建符号链接（不碰目标项目的 skills/ 目录）
-mkdir -p .miwrite
-ln -snf ~/.miwrite-skill/skills .miwrite/skills
-ln -snf ~/.miwrite-skill/AGENTS.md .miwrite/AGENTS.md
-
-# 在项目 AGENTS.md 中添加一行引用（不覆盖已有文件，不重复添加）
-grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md' >> AGENTS.md
-```
-
-安装后项目结构：
-```
-your-project/
-├── AGENTS.md          ← 原有内容不变，末尾多一行 @.miwrite/AGENTS.md
-├── .miwrite/          ← 新增，不与任何现有目录冲突
-│   ├── AGENTS.md → ~/.miwrite-skill/AGENTS.md
-│   └── skills/ → ~/.miwrite-skill/skills/
-└── ...原有文件...
-```
-
-可重入：重复执行不会产生重复内容（`grep -q` 检查已存在则跳过）。
+如果项目已有 AGENTS.md，安装脚本会备份并追加，不会覆盖。
 
 ### OpenCode
 
 ```bash
+git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
+cd your-project
 mkdir -p .opencode/skills
-ln -snf ~/.miwrite-skill/skills/lit-review .opencode/skills/lit-review
-ln -snf ~/.miwrite-skill/skills/close-reading .opencode/skills/close-reading
-ln -snf ~/.miwrite-skill/skills/polish .opencode/skills/polish
-ln -snf ~/.miwrite-skill/skills/review .opencode/skills/review
+ln -snf ~/.miwrite-skill/src/skills/lit-review .opencode/skills/lit-review
+ln -snf ~/.miwrite-skill/src/skills/close-reading .opencode/skills/close-reading
+ln -snf ~/.miwrite-skill/src/skills/polish .opencode/skills/polish
+ln -snf ~/.miwrite-skill/src/skills/review .opencode/skills/review
 ```
 
-### Cursor
+### 通用方式（任何 AI 工具）
 
-Cursor 读取项目根目录的 `AGENTS.md`。
+直接复制 `src/skills/<name>/SKILL.md` 的内容粘贴到对话中即可使用。
 
-```bash
-# 在 .miwrite/ 下创建符号链接
-mkdir -p .miwrite
-ln -snf ~/.miwrite-skill/skills .miwrite/skills
-ln -snf ~/.miwrite-skill/AGENTS.md .miwrite/AGENTS.md
+## 仓库结构
 
-# 在项目 AGENTS.md 中添加一行引用
-grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md' >> AGENTS.md
 ```
-
-注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供。目前通过根目录 `AGENTS.md` 生效。
-
-### 通用方式
-
-直接复制 `skills/<name>/SKILL.md` 的内容粘贴到任何 AI 对话中即可使用。
+miwrite.skill/
+├── AGENTS.md              ← 通用规则 + 苏格拉底协议（Codex/Cursor 直接读取）
+├── install-claude.sh      ← Claude Code 一键安装
+├── install-codex.sh       ← Codex/Cursor 一键安装
+├── src/
+│   ├── router.md          ← AGENTS.md 源文件
+│   └── skills/
+│       ├── lit-review/SKILL.md
+│       ├── close-reading/SKILL.md
+│       ├── polish/SKILL.md
+│       └── review/SKILL.md
+├── LICENSE
+└── README.md
+```
 
 ## 使用方式
 
@@ -143,11 +121,20 @@ grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md'
 
 ## 核心设计原则
 
-1. **诊断先行**：先分析输入材料的类型、结构和证据边界，再执行具体任务
+1. **苏格拉底式追问**：先诊断材料，再问 1-2 个针对性问题，最后执行
 2. **证据锚定**：所有判断必须附带原文出处，不编造文献、数据或页码
 3. **认识论克制**：保留"可能""在一定程度上"等限定语，不将关联升级为因果
 4. **反 AI 套话**：自动检测并删除"综上所述""填补空白"等典型 AI 表达
 5. **产品化输出**：不只是文本，而是可继续工作的研究材料
+
+## 跨工具兼容性
+
+| 工具 | 安装方式 | 技能发现 | 规则加载 |
+|------|---------|---------|---------|
+| Claude Code | install-claude.sh | `.claude/skills/*/SKILL.md` 自动发现 | `@import` in CLAUDE.md |
+| Codex CLI | install-codex.sh | `src/skills/` 符号链接 | 根目录 AGENTS.md 原生读取 |
+| Cursor | install-codex.sh | `src/skills/` 符号链接 | 根目录 AGENTS.md 原生读取 |
+| OpenCode | 手动 ln | `.opencode/skills/` 符号链接 | SKILL.md frontmatter |
 
 ## 来源
 
@@ -155,4 +142,4 @@ grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md'
 
 ## 许可
 
-MIT
+MIT — 详见 [LICENSE](LICENSE)
