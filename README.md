@@ -23,8 +23,10 @@ git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
 
 ### Claude Code
 
+Claude Code 通过 `.claude/skills/<name>/SKILL.md` 自动发现技能。AGENTS.md 通过 `@` 导入语法加载。
+
 ```bash
-# 创建 .claude/skills/ 并链接 4 个技能
+# 链接 4 个技能到 Claude Code 的技能发现目录
 mkdir -p .claude/skills
 ln -sf ~/.miwrite-skill/skills/lit-review .claude/skills/lit-review
 ln -sf ~/.miwrite-skill/skills/close-reading .claude/skills/close-reading
@@ -32,25 +34,34 @@ ln -sf ~/.miwrite-skill/skills/polish .claude/skills/polish
 ln -sf ~/.miwrite-skill/skills/review .claude/skills/review
 ```
 
-然后在项目根目录的 `CLAUDE.md` 中添加一行：
+然后在项目根目录的 `CLAUDE.md` 中添加一行（`@` 是 Claude Code 的文件导入语法）：
 
 ```
 @~/.miwrite-skill/AGENTS.md
 ```
 
-这样 AGENTS.md 的 `skills/...` 路径通过 `.claude/skills/` 下的符号链接自然解析。
+如果项目已有 `CLAUDE.md`，追加即可：`echo '@~/.miwrite-skill/AGENTS.md' >> CLAUDE.md`
 
 ### Codex CLI
 
-```bash
-# 链接 AGENTS.md 到项目根目录（不覆盖已有文件）
-test -f AGENTS.md || ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+Codex 读取项目根目录的 `AGENTS.md`。
 
-# 链接 skills 目录
+```bash
+# 链接 skills 目录（如果已有 skills/，先备份再替换）
+test -d skills && mv skills skills.bak
 ln -sf ~/.miwrite-skill/skills ./skills
+
+# AGENTS.md：如果不存在则直接链接；如果已存在则追加导入行
+if [ ! -f AGENTS.md ]; then
+  ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+else
+  echo "" >> AGENTS.md
+  echo "# miwrite academic writing skills (imported)" >> AGENTS.md
+  cat ~/.miwrite-skill/AGENTS.md >> AGENTS.md
+fi
 ```
 
-Codex 读取项目根目录的 `AGENTS.md`，其中的 `skills/...` 路径通过 `./skills` 符号链接解析。
+如果目标项目已有 `skills/` 目录，`mv skills skills.bak` 会备份原目录。合并后可手动决定是否保留备份。
 
 ### OpenCode
 
@@ -64,17 +75,24 @@ ln -sf ~/.miwrite-skill/skills/review .opencode/skills/review
 
 ### Cursor
 
-Cursor 读取项目根目录的 `AGENTS.md` 和 `.cursor/rules/*.mdc`。
+Cursor 读取项目根目录的 `AGENTS.md`。
 
 ```bash
-# 链接 AGENTS.md（不覆盖已有文件）
-test -f AGENTS.md || ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
-
-# 链接 skills 到项目，供 AGENTS.md 路径解析
+# 链接 skills 目录（如果已有 skills/，先备份再替换）
+test -d skills && mv skills skills.bak
 ln -sf ~/.miwrite-skill/skills ./skills
+
+# AGENTS.md：如果不存在则直接链接；如果已存在则追加
+if [ ! -f AGENTS.md ]; then
+  ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+else
+  echo "" >> AGENTS.md
+  echo "# miwrite academic writing skills (imported)" >> AGENTS.md
+  cat ~/.miwrite-skill/AGENTS.md >> AGENTS.md
+fi
 ```
 
-注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供 `.mdc` 包装。目前 Cursor 集成通过根目录 `AGENTS.md` 生效，技能文件通过 `./skills` 符号链接供 AI 在对话中读取。
+注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供 `.mdc` 包装。目前通过根目录 `AGENTS.md` 生效。
 
 ### 通用方式
 
