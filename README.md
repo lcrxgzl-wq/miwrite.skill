@@ -13,64 +13,68 @@
 
 ## 快速安装
 
+> 需要 bash/zsh 环境。Windows 用户请用 Git Bash 或 WSL。PowerShell 用户可参考各命令的等价操作。
+
 所有方式都先克隆仓库：
 
 ```bash
 git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
 ```
 
-然后在你的**项目目录**下执行对应工具的安装命令。
+然后在你的**项目目录**下执行对应工具的安装命令。安装过程不修改、不覆盖、不备份目标项目的任何现有文件。
 
 ### Claude Code
 
-Claude Code 通过 `.claude/skills/<name>/SKILL.md` 自动发现技能。AGENTS.md 通过 `@` 导入语法加载。
+Claude Code 通过 `.claude/skills/<name>/SKILL.md` 自动发现技能，通过 `@` 语法导入上下文文件。
 
 ```bash
-# 链接 4 个技能到 Claude Code 的技能发现目录
+# 在 .claude/skills/ 下创建符号链接（不覆盖已有内容）
 mkdir -p .claude/skills
-ln -sf ~/.miwrite-skill/skills/lit-review .claude/skills/lit-review
-ln -sf ~/.miwrite-skill/skills/close-reading .claude/skills/close-reading
-ln -sf ~/.miwrite-skill/skills/polish .claude/skills/polish
-ln -sf ~/.miwrite-skill/skills/review .claude/skills/review
+ln -snf ~/.miwrite-skill/skills/lit-review .claude/skills/lit-review
+ln -snf ~/.miwrite-skill/skills/close-reading .claude/skills/close-reading
+ln -snf ~/.miwrite-skill/skills/polish .claude/skills/polish
+ln -snf ~/.miwrite-skill/skills/review .claude/skills/review
+
+# 在 CLAUDE.md 中添加一行导入（如果已有 CLAUDE.md 则追加）
+echo '@~/.miwrite-skill/AGENTS.md' >> CLAUDE.md
 ```
 
-然后在项目根目录的 `CLAUDE.md` 中添加一行（`@` 是 Claude Code 的文件导入语法）：
-
-```
-@~/.miwrite-skill/AGENTS.md
-```
-
-如果项目已有 `CLAUDE.md`，追加即可：`echo '@~/.miwrite-skill/AGENTS.md' >> CLAUDE.md`
+Claude Code 会自动发现 `.claude/skills/` 下的 4 个技能，并通过 `@` 导入加载 AGENTS.md 通用规则。
 
 ### Codex CLI
 
 Codex 读取项目根目录的 `AGENTS.md`。
 
 ```bash
-# 链接 skills 目录（如果已有 skills/，先备份再替换）
-test -d skills && mv skills skills.bak
-ln -sf ~/.miwrite-skill/skills ./skills
+# 在 .miwrite/ 下创建符号链接（不碰目标项目的 skills/ 目录）
+mkdir -p .miwrite
+ln -snf ~/.miwrite-skill/skills .miwrite/skills
+ln -snf ~/.miwrite-skill/AGENTS.md .miwrite/AGENTS.md
 
-# AGENTS.md：如果不存在则直接链接；如果已存在则追加导入行
-if [ ! -f AGENTS.md ]; then
-  ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
-else
-  echo "" >> AGENTS.md
-  echo "# miwrite academic writing skills (imported)" >> AGENTS.md
-  cat ~/.miwrite-skill/AGENTS.md >> AGENTS.md
-fi
+# 在项目 AGENTS.md 中添加一行引用（不覆盖已有文件，不重复添加）
+grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md' >> AGENTS.md
 ```
 
-如果目标项目已有 `skills/` 目录，`mv skills skills.bak` 会备份原目录。合并后可手动决定是否保留备份。
+安装后项目结构：
+```
+your-project/
+├── AGENTS.md          ← 原有内容不变，末尾多一行 @.miwrite/AGENTS.md
+├── .miwrite/          ← 新增，不与任何现有目录冲突
+│   ├── AGENTS.md → ~/.miwrite-skill/AGENTS.md
+│   └── skills/ → ~/.miwrite-skill/skills/
+└── ...原有文件...
+```
+
+可重入：重复执行不会产生重复内容（`grep -q` 检查已存在则跳过）。
 
 ### OpenCode
 
 ```bash
 mkdir -p .opencode/skills
-ln -sf ~/.miwrite-skill/skills/lit-review .opencode/skills/lit-review
-ln -sf ~/.miwrite-skill/skills/close-reading .opencode/skills/close-reading
-ln -sf ~/.miwrite-skill/skills/polish .opencode/skills/polish
-ln -sf ~/.miwrite-skill/skills/review .opencode/skills/review
+ln -snf ~/.miwrite-skill/skills/lit-review .opencode/skills/lit-review
+ln -snf ~/.miwrite-skill/skills/close-reading .opencode/skills/close-reading
+ln -snf ~/.miwrite-skill/skills/polish .opencode/skills/polish
+ln -snf ~/.miwrite-skill/skills/review .opencode/skills/review
 ```
 
 ### Cursor
@@ -78,21 +82,16 @@ ln -sf ~/.miwrite-skill/skills/review .opencode/skills/review
 Cursor 读取项目根目录的 `AGENTS.md`。
 
 ```bash
-# 链接 skills 目录（如果已有 skills/，先备份再替换）
-test -d skills && mv skills skills.bak
-ln -sf ~/.miwrite-skill/skills ./skills
+# 在 .miwrite/ 下创建符号链接
+mkdir -p .miwrite
+ln -snf ~/.miwrite-skill/skills .miwrite/skills
+ln -snf ~/.miwrite-skill/AGENTS.md .miwrite/AGENTS.md
 
-# AGENTS.md：如果不存在则直接链接；如果已存在则追加
-if [ ! -f AGENTS.md ]; then
-  ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
-else
-  echo "" >> AGENTS.md
-  echo "# miwrite academic writing skills (imported)" >> AGENTS.md
-  cat ~/.miwrite-skill/AGENTS.md >> AGENTS.md
-fi
+# 在项目 AGENTS.md 中添加一行引用
+grep -q '.miwrite/AGENTS.md' AGENTS.md 2>/dev/null || echo '@.miwrite/AGENTS.md' >> AGENTS.md
 ```
 
-注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供 `.mdc` 包装。目前通过根目录 `AGENTS.md` 生效。
+注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供。目前通过根目录 `AGENTS.md` 生效。
 
 ### 通用方式
 
