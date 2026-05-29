@@ -45,11 +45,18 @@ ln -s ~/.miwrite-skill/skills/* .opencode/skills/
 
 ### Cursor
 
+Cursor 支持根目录 `AGENTS.md` 和 `.cursor/rules/`。最简方式：
+
 ```bash
 git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-# Cursor 2.5+ 直接读取 .claude/skills/
-ln -s ~/.miwrite-skill/skills/* .claude/skills/
+# 方式 1：导入 AGENTS.md 到项目根目录
+cp ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+# 方式 2：创建 .cursor/rules/ 符号链接（Cursor 原生支持）
+mkdir -p .cursor/rules
+ln -s ~/.miwrite-skill/skills/* .cursor/rules/
 ```
+
+注：Cursor 2.5+ 理论上可读取 `.claude/skills/`，但此路径未经充分验证。推荐使用上述方式。
 
 ### 通用方式
 

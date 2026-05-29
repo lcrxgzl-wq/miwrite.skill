@@ -20,14 +20,14 @@ description: "Use when the user wants to synthesize multiple literature sources 
 
 ### 第一步：文献解析
 
-收到用户提供的文献文本后（即使是摘要或段落也尽量提取），先将其解析为结构化信息。对每篇文献严格输出以下 JSON 数组（无 Markdown 代码块标记、无解释文字）：
+收到用户提供的文献文本后（即使是摘要或段落也尽量提取），先在内部解析为结构化信息。**此步骤不输出给用户**，仅供后续综述生成使用。对每篇文献提取：
 
-- id, title, authors, year, venue
-- theory, method, core_argument
-- key_findings, evidence, limitations
-- relevance_note（相对于用户研究主题的关联说明）
+- 标题、作者、年份、期刊/来源
+- 核心理论框架、研究方法、核心论点
+- 关键发现、证据类型、局限性
+- 与用户研究主题的关联说明
 
-缺失字段用空字符串/空数组，不编造。
+缺失字段留空，不编造。
 
 ### 第二步：综述生成
 

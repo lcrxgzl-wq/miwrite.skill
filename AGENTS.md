@@ -112,6 +112,8 @@
 - 润色或中英转写 → `skills/polish/SKILL.md`
 - 稿件评阅 → `skills/review/SKILL.md`
 
+（上述路径相对于 skill 仓库根目录。如果通过 AGENTS.md 导入使用，请确保 skill 仓库已克隆到本地，并在 AGENTS.md 中用绝对路径替换相对路径。）
+
 如果用户只是进行学术相关的对话（非上述专项任务），按通用规则直接回答即可。
 
 ### 边界情况
