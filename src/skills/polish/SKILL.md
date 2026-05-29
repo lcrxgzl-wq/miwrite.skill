@@ -141,23 +141,9 @@ description: "Use when the user wants to polish Chinese academic writing or tran
 - 不使用 emoji
 - 少写套话，多写可验证判断
 
-## 必检项（不通过则整体不合格）
+## 参考资料（按需读取）
 
-1. 不改变原文论点、数据、引用或结构
-2. 删除 AI 套话和空泛表述
-3. 改善段落过渡和句式节奏
-4. 术语前后一致
-5. 不把谨慎标记（"可能""在一定程度上"）删除
-
-转写额外检查：
-1. 输出读起来像母语学术写作，零翻译腔
-2. 保留所有技术内容、引用、专有名词
-3. 遵守目标学科规范
-4. 不使用 "Under the background of..." 等中式英语
-
-## 高频负例（必须避免）
-
-**过度润色改变认知强度**：删除"可能""在一定程度上"等认知情态词——绝不允许。
-**翻译腔英文**："Under the background of..."——改为具体时间段或因果条件。
-**空泛声称**："具有重要的理论意义和实践价值"——删除或替换为具体贡献。
-**忽略术语映射**：用户提供了术语对照表但输出未遵守——强制使用。
+- 质量标准：`src/kb/polish/rubric.md`
+- 核心术语表：`src/kb/common/terms.md`
+- 通用负例模式：`src/kb/common/negative-patterns.md`
+- 学术风格指南：`src/kb/common/style-guide.md`
