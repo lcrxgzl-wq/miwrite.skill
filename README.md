@@ -13,50 +13,68 @@
 
 ## 快速安装
 
+所有方式都先克隆仓库：
+
+```bash
+git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
+```
+
+然后在你的**项目目录**下执行对应工具的安装命令。
+
 ### Claude Code
 
 ```bash
-# 克隆到本地
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-
-# 在你的项目目录下创建符号链接
-ln -s ~/.miwrite-skill/skills/* .claude/skills/
+# 创建 .claude/skills/ 并链接 4 个技能
+mkdir -p .claude/skills
+ln -sf ~/.miwrite-skill/skills/lit-review .claude/skills/lit-review
+ln -sf ~/.miwrite-skill/skills/close-reading .claude/skills/close-reading
+ln -sf ~/.miwrite-skill/skills/polish .claude/skills/polish
+ln -sf ~/.miwrite-skill/skills/review .claude/skills/review
 ```
 
-或在项目根目录的 `CLAUDE.md` 中添加：
+然后在项目根目录的 `CLAUDE.md` 中添加一行：
 
 ```
 @~/.miwrite-skill/AGENTS.md
 ```
 
+这样 AGENTS.md 的 `skills/...` 路径通过 `.claude/skills/` 下的符号链接自然解析。
+
 ### Codex CLI
 
 ```bash
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-cat ~/.miwrite-skill/AGENTS.md >> AGENTS.md
+# 链接 AGENTS.md 到项目根目录（不覆盖已有文件）
+test -f AGENTS.md || ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+
+# 链接 skills 目录
+ln -sf ~/.miwrite-skill/skills ./skills
 ```
+
+Codex 读取项目根目录的 `AGENTS.md`，其中的 `skills/...` 路径通过 `./skills` 符号链接解析。
 
 ### OpenCode
 
 ```bash
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-ln -s ~/.miwrite-skill/skills/* .opencode/skills/
+mkdir -p .opencode/skills
+ln -sf ~/.miwrite-skill/skills/lit-review .opencode/skills/lit-review
+ln -sf ~/.miwrite-skill/skills/close-reading .opencode/skills/close-reading
+ln -sf ~/.miwrite-skill/skills/polish .opencode/skills/polish
+ln -sf ~/.miwrite-skill/skills/review .opencode/skills/review
 ```
 
 ### Cursor
 
-Cursor 支持根目录 `AGENTS.md` 和 `.cursor/rules/`。最简方式：
+Cursor 读取项目根目录的 `AGENTS.md` 和 `.cursor/rules/*.mdc`。
 
 ```bash
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skill
-# 方式 1：导入 AGENTS.md 到项目根目录
-cp ~/.miwrite-skill/AGENTS.md ./AGENTS.md
-# 方式 2：创建 .cursor/rules/ 符号链接（Cursor 原生支持）
-mkdir -p .cursor/rules
-ln -s ~/.miwrite-skill/skills/* .cursor/rules/
+# 链接 AGENTS.md（不覆盖已有文件）
+test -f AGENTS.md || ln -sf ~/.miwrite-skill/AGENTS.md ./AGENTS.md
+
+# 链接 skills 到项目，供 AGENTS.md 路径解析
+ln -sf ~/.miwrite-skill/skills ./skills
 ```
 
-注：Cursor 2.5+ 理论上可读取 `.claude/skills/`，但此路径未经充分验证。推荐使用上述方式。
+注：Cursor 的 `.cursor/rules/` 使用 `.mdc` 格式，本仓库暂未提供 `.mdc` 包装。目前 Cursor 集成通过根目录 `AGENTS.md` 生效，技能文件通过 `./skills` 符号链接供 AI 在对话中读取。
 
 ### 通用方式
 
