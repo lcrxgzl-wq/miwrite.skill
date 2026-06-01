@@ -1,0 +1,24 @@
+{
+  "name": "miwrite-skills",
+  "version": "1.0.0",
+  "description": "中文社科研究学术技能：资料分析、文献综述、文本精读、资料主线、稿件评阅、润色转写、研究设计压力测试、报告生成。内置方法论知识库，支持 MCP 远程调用和本地执行。",
+  "author": {
+    "name": "miwrite",
+    "url": "https://miwrite.art"
+  },
+  "homepage": "https://github.com/lcrxgzl-wq/miwrite.skill",
+  "repository": "https://github.com/lcrxgzl-wq/miwrite.skill",
+  "license": "MIT",
+  "keywords": [
+    "academic",
+    "research",
+    "chinese",
+    "social-science",
+    "literature-review",
+    "data-analysis",
+    "qualitative",
+    "manuscript-review",
+    "polish",
+    "mcp"
+  ]
+}
