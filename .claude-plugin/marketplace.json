@@ -1,0 +1,17 @@
+{
+  "name": "miwrite-skills",
+  "owner": {
+    "name": "miwrite",
+    "url": "https://miwrite.art"
+  },
+  "description": "中文社科研究学术技能套件 — 8 条 pipeline，内置方法论知识库，支持 MCP 远程调用和本地执行。",
+  "plugins": [
+    {
+      "name": "miwrite-skills",
+      "source": "./",
+      "description": "8 个学术技能 + 23 个知识库模块 + MCP 远程/本地双模式。覆盖资料分析、文献综述、精读、评阅、润色、压力测试、报告生成。",
+      "version": "1.0.0",
+      "license": "MIT"
+    }
+  ]
+}
