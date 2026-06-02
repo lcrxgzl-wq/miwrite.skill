@@ -1,63 +1,32 @@
 ---
 name: miwrite-data
-description: 质性资料编码与分析 — 访谈、田野笔记、焦点小组
+description: Local-only qualitative analysis for interviews, field notes, focus groups, and mixed text material.
 status: active
-related_skills: [miwrite-organize, miwrite-review]
-trigger_keywords: [资料分析, 编码, 质性分析, 访谈分析, 田野笔记, data analysis, coding, qualitative]
 ---
 
-# 资料分析
+# Local Data Analysis
 
-## 何时使用
+Use this skill when the user has local qualitative material and wants coding, theme extraction, contradiction tracking, or an analysis draft.
 
-用户有访谈转录稿、田野笔记、焦点小组记录、档案文献等质性资料，需要系统性编码和分析。
+Local-only contract:
+- do not call hosted MCP
+- do not use API keys
+- do not use hosted knowledge search
 
-## 输入
+Inputs:
+- local material text or local files
+- research topic if available
+- desired analysis depth if available
 
-- **必需**：原始资料文本（input_text）+ 研究主题（topic）
-- **可选**：分析深度（fast/standard/deep）、资料类型、分析框架、输出格式
+Workflow:
+1. inspect the local material and identify scope, source types, and obvious gaps
+2. propose or derive a bounded coding frame from the material itself
+3. extract candidate themes, counterexamples, and uncertainty
+4. write a local analysis draft with explicit evidence anchors to the user's material
 
-## 输出
-
-- 编码方案 + 证据锚定的分析报告
-- 反例和矛盾保留
-- 解释边界和人工判断提示
-- [p.N] 页码锚点（PDF 来源）
-
-## 调用方式
-
-```bash
-# MCP 调用
-curl -X POST https://miwrite.art/api/mcp/remote/rpc \
-  -H "Authorization: Bearer $MIWRITE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "tools/call",
-    "params": {
-      "name": "run_data_analysis_pipeline",
-      "arguments": {
-        "input_text": "你的资料文本...",
-        "topic": "研究主题",
-        "analysis_depth": "standard"
-      }
-    }
-  }'
-```
-
-## 深度选择
-
-| 深度 | 说明 | 典型耗时 |
-|------|------|---------|
-| fast | 快速编码，跳过深度验证 | 30-60s |
-| standard | 完整编码 + 验证 | 1-3min |
-| deep | 穷尽编码 + 交叉验证 + 知识库检索 | 3-8min |
-
-## 引用验证
-
-输出中的引用会自动通过 Semantic Scholar API 验证。未找到的引用标记为 `[未找到]`。
-
-## 反谄媚
-
-如果资料中的论点存在问题（如样本偏差、逻辑跳跃），分析报告会明确指出，不会假装没问题。
+Output:
+- coding summary
+- theme summary
+- counterexamples and tensions
+- evidence-bound analysis
+- missing-material warning if the local evidence is too thin

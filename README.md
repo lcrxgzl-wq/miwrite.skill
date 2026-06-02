@@ -1,67 +1,88 @@
-# miwrite 学术技能
+# miwrite Local Skills
 
-一套面向中文社科研究者的 Claude Code / Cursor 技能，覆盖从材料整理到论文发表的完整流程。
+`miwrite.skill` is the local-only skills package for Chinese social-science writing and research work.
 
-## 安装
+It is built for Claude Code, Codex, Cursor, and similar local agents that can read local skill files.
 
-### 方式一：自动加载（最简单）
+## Boundary
+
+- No login required
+- No `MIWRITE_API_KEY`
+- No hosted MCP dependency
+- No hosted knowledge-base dependency
+- No hosted balance or paid-model usage
+- Works only from local files, local notes, local project context, and direct user input
+
+If you want server-side model execution, hosted knowledge search, or API-key-based gateway access, use the separate Hosted MCP product at `https://miwrite.art/mcp`.
+
+## Mode Split
+
+| Surface | Login / API key | Hosted model | Hosted knowledge | Cost | Main use |
+|---|---|---|---|---|---|
+| Local Skills (`miwrite.skill`) | No | No | No | Free | Local drafting, critique, organization, and research planning |
+| Hosted MCP helper tools | Yes | No | `search_kb` uses hosted search | Free with platform limits | Fetch workflow packs or use hosted helper calls |
+| Hosted MCP paid pipelines | Yes | Yes | May use hosted resources | Paid | Server-side pipeline execution through `tools/call` |
+
+## Included Skills
+
+| Skill ID | Typical command | Use case |
+|---|---|---|
+| `data-analysis` | `/miwrite-data` | Local qualitative coding and analysis |
+| `lit-review` | `/miwrite-lit` | Local literature review synthesis |
+| `close-reading` | `/miwrite-read` | Local deep reading of a paper, report, or chapter |
+| `organize` | `/miwrite-organize` | Local material ledger and main-thread extraction |
+| `review` | `/miwrite-review` | Local manuscript or report critique |
+| `polish` | `/miwrite-polish` | Local academic polishing or transcreation |
+| `socratic` | `/miwrite-ask` | Local guided research dialogue |
+| `design-stress` | `/miwrite-design-stress` | Local red-team review of a proposal or research design |
+| `report-mode` | `/miwrite-report-mode` | Local brief, memo, and decision-facing report drafting |
+
+## Quick Install
+
+Run the installer from the project where you want the skills to be available.
+
+### Claude Code
 
 ```bash
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git /tmp/miwrite-skills
-mkdir -p ~/.claude/skills
-cp -r /tmp/miwrite-skills/skills/* ~/.claude/skills/
-rm -rf /tmp/miwrite-skills
+curl -fsSL https://raw.githubusercontent.com/lcrxgzl-wq/miwrite.skill/main/install-claude.sh | bash
 ```
 
-重启 Claude Code，`/miwrite-data`、`/miwrite-lit` 等命令自动出现。
+This creates local links under `.claude/skills/` and a local mirror under `.miwrite/skills/`.
 
-### 方式二：CLI Marketplace
+### Codex / Cursor
 
 ```bash
-claude plugin marketplace add lcrxgzl-wq/miwrite.skill
-claude plugin install miwrite-skills@lcrxgzl-wq-miwrite-skill
+curl -fsSL https://raw.githubusercontent.com/lcrxgzl-wq/miwrite.skill/main/install-codex.sh | bash
 ```
 
-### 方式三：本地目录
+This creates `.miwrite/skills/` and appends local routing rules to the project `AGENTS.md`.
 
-```bash
-claude --plugin-dir /path/to/skills
-```
+More installation detail: [install.md](./install.md)
 
-### 方式四：MCP 协议（不装 Skills）
+## What Local Skills Can Do
 
-```bash
-claude mcp add-json miwrite '{"type":"url","url":"https://miwrite.art/api/mcp/remote/rpc","headers":{"Authorization":"Bearer YOUR_API_KEY"}}'
-```
+- route a request to the correct local workflow
+- inspect local files in the current project
+- produce structured local drafts, critique, outlines, and revision plans
+- stay fully offline from the miwrite hosted runtime
 
-## 技能列表
+## What Local Skills Cannot Do
 
-| 技能 | 命令 | 说明 |
-|------|------|------|
-| 资料分析 | `/miwrite-data` | 质性资料编码与分析 |
-| 文献综述 | `/miwrite-lit` | 文献综述合成 |
-| 文本精读 | `/miwrite-read` | 论文/报告深度阅读 |
-| 资料主线 | `/miwrite-organize` | 混合材料结构化整理 |
-| 稿件评阅 | `/miwrite-review` | 论文/报告评审 |
-| 润色转写 | `/miwrite-polish` | 学术写作润色/中译英 |
-| 苏格拉底对话 | `/miwrite-ask` | 研究问题引导对话 |
+- call `https://miwrite.art/api/mcp/remote/rpc`
+- use `MIWRITE_API_KEY`
+- use hosted knowledge search
+- spend hosted balance
+- rely on a bundled hosted knowledge base
 
-## MCP 接入
+## When To Use Hosted MCP Instead
 
-所有技能底层调用 miwrite MCP API。需要：
-1. 在 https://miwrite.art/mcp 注册并创建 API key
-2. 配置环境变量 `MIWRITE_API_KEY`
+Use Hosted MCP only when you explicitly want:
 
-## 与 ARS 的区别
+- server-side paid model execution
+- hosted `search_kb`
+- API-key-based remote tool access
+- the public MCP gateway documented at `https://miwrite.art/mcp/docs`
 
-| 维度 | miwrite Skills | ARS |
-|------|---------------|-----|
-| 接入方式 | MCP 远程 API | Claude Code Skills |
-| 安装 | 一键安装 | 需要 Claude Code |
-| 语言 | 中文原生 | 英文核心 |
-| 定价 | 按次计费 ¥0.10 起 | 免费但自付 API $4-6/篇 |
-| 资料分析 | 独立强项 | 无 |
+## License
 
-## 许可
-
-MIT License
+MIT

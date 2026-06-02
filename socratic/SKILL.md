@@ -1,33 +1,25 @@
 ---
 name: miwrite-ask
-description: 苏格拉底对话 — 研究问题引导与方法论讨论
+description: Local-only Socratic dialogue for research direction, framing, and method discussion.
 status: active
-related_skills: [miwrite-data, miwrite-lit]
-trigger_keywords: [苏格拉底, 对话, 引导, 讨论, socratic, ask]
 ---
 
-# 苏格拉底对话
+# Local Socratic Dialogue
 
-## 何时使用
+Use this skill when the user wants to clarify a research question, frame a problem, or reason through a design choice using only local context and direct dialogue.
 
-用户有研究问题想讨论，或需要方法论指导，或想通过对话澄清研究方向。
+Local-only contract:
+- do not call hosted MCP
+- do not use API keys
+- do not use hosted knowledge search
 
-## 输入
+Workflow:
+1. identify the user's current uncertainty
+2. ask the smallest useful follow-up questions
+3. surface assumptions, tradeoffs, and missing evidence
+4. help the user converge on a clearer local next step
 
-- 用户的自然语言问题或研究描述
-
-## 输出
-
-- 追问引导，帮助用户澄清研究问题、方法选择、材料解读
-- 方法论建议（引用知识库中的方法论指南）
-- 如果用户的研究设计有问题，会明确指出（反谄媚规则）
-
-## 特点
-
-- **意图检测**：区分探索性 vs 目标导向对话
-- **反谄媚**：不一味同意用户，会引入反论
-- **知识库支撑**：引用方法论指南和质量标准
-
-## 使用方式
-
-在 miwrite 工作台（https://miwrite.art/chat.html）直接对话，系统会自动路由到苏格拉底模式。
+Output:
+- focused questions
+- clarified framing
+- candidate next steps grounded in the user's own material

@@ -1,89 +1,92 @@
-# miwrite Skills 安装指南
+# Local Skills Install Guide
 
-## 方式一：自动加载（最简单）
+This guide is only for the local skills package.
 
-Claude Code v2.1.157+ 支持 `.claude/skills/` 目录自动加载，无需 marketplace。
+It does not install or configure Hosted MCP access.
 
-```bash
-# 克隆仓库
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git /tmp/miwrite-skills
+## Before You Run Anything
 
-# 复制到用户级 skills 目录（全局生效）
-mkdir -p ~/.claude/skills
-cp -r /tmp/miwrite-skills/skills/* ~/.claude/skills/
+Run the installer from the project where you want the skills to be available.
 
-# 或复制到项目级目录（仅当前项目）
-mkdir -p .claude/skills
-cp -r /tmp/miwrite-skills/skills/* .claude/skills/
+The installer can work in two modes:
 
-# 清理临时文件
-rm -rf /tmp/miwrite-skills
-```
+- direct raw-script install from GitHub
+- local checkout install if you already cloned `miwrite.skill`
 
-复制后重启 Claude Code，技能自动出现在 `/` 命令列表中。
+## Quick Install
 
-## 方式二：CLI Marketplace 安装
+### Claude Code
 
 ```bash
-# 1. 添加 marketplace 源（只需一次）
-claude plugin marketplace add lcrxgzl-wq/miwrite.skill
-
-# 2. 安装插件
-claude plugin install miwrite-skills@lcrxgzl-wq-miwrite-skill
-
-# 3. 验证
-claude plugin details miwrite-skills
+curl -fsSL https://raw.githubusercontent.com/lcrxgzl-wq/miwrite.skill/main/install-claude.sh | bash
 ```
 
-注意：`/plugin` 是交互式界面，不接受命令行参数。请在系统终端（非 Claude Code REPL）中执行上述命令。
+After install:
 
-## 方式三：本地目录加载（开发/调试）
+- restart Claude Code
+- the local skills appear under `.claude/skills/`
+- `.miwrite/skills/` and `.miwrite/AGENTS.md` are created for local routing clarity
+
+### Codex / Cursor
 
 ```bash
-# 直接指向本地 skills 目录
-claude --plugin-dir D:/download/v2/skills
-
-# 或指向 zip 包
-claude --plugin-url https://github.com/lcrxgzl-wq/miwrite.skill/archive/refs/heads/main.zip
+curl -fsSL https://raw.githubusercontent.com/lcrxgzl-wq/miwrite.skill/main/install-codex.sh | bash
 ```
 
-## 方式四：MCP 协议（不安装 Skills）
+After install:
 
-不安装 Skills，直接通过 MCP 协议调用后端能力：
+- the project gets a local `.miwrite/skills/` directory
+- the project `AGENTS.md` is extended with local routing rules
 
-```json
-{
-  "mcpServers": {
-    "miwrite": {
-      "url": "https://miwrite.art/api/mcp/remote/rpc",
-      "headers": {
-        "Authorization": "Bearer YOUR_API_KEY"
-      }
-    }
-  }
-}
+## Install From A Local Checkout
+
+If you already cloned this repository somewhere on disk:
+
+```bash
+cd /path/to/your/project
+bash /path/to/miwrite.skill/install-claude.sh
 ```
 
-配置文件位置：
-- Claude Desktop: `~/.claude/claude_desktop_config.json`
-- Claude Code: `.claude/settings.json` 中的 `mcpServers` 字段
+or:
 
-## 获取 API Key
+```bash
+cd /path/to/your/project
+bash /path/to/miwrite.skill/install-codex.sh
+```
 
-1. 访问 https://miwrite.art/mcp
-2. 登录（支持邮箱验证码登录）
-3. 点击"创建 Key"
-4. 复制 token（只显示一次）
+The installer detects the local checkout automatically and reuses it instead of cloning again.
 
-## 定价
+## Installed Skill Set
 
-| 模型档位 | 输入价格 | 输出价格 | 说明 |
-|---------|---------|---------|------|
-| Flash | ¥10/1M | ¥20/1M | 快速，适合草稿 |
-| Pro | ¥20/1M | ¥40/1M | 推荐，均衡 |
-| Opus | ¥200/1M | ¥600/1M | 顶级，适合发表级 |
+- `data-analysis`
+- `lit-review`
+- `close-reading`
+- `organize`
+- `review`
+- `polish`
+- `socratic`
+- `design-stress`
+- `report-mode`
 
-- 本地执行（Skills）：免费，不消耗 token
-- 远程调用（MCP）：按实际 token 计费
-- `search_kb` 工具：免费（200 次/天）
-- 新用户注册赠送 ¥2.00 余额
+## Local-Only Contract
+
+The installed skills:
+
+- read local project files
+- use local project context
+- do not require online login
+- do not require API keys
+- do not call hosted MCP
+- do not use hosted knowledge retrieval
+- do not ship a hosted or bundled knowledge base
+
+## Hosted MCP Is Separate
+
+If you want:
+
+- server-side model execution
+- hosted `search_kb`
+- hosted billing and balance
+- the public API-key gateway
+
+configure Hosted MCP separately at `https://miwrite.art/mcp`.

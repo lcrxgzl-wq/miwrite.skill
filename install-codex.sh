@@ -1,22 +1,50 @@
 #!/bin/bash
-# Install miwrite.skill for Codex CLI or Cursor
-# Run this in your project directory
+# Install miwrite local skills for Codex CLI or Cursor
 
-set -e
+set -euo pipefail
 
-SKILL_REPO="${HOME}/.miwrite-skill"
+REPO_URL="https://github.com/lcrxgzl-wq/miwrite.skill.git"
+CACHE_REPO="${HOME}/.miwrite-skill"
 
-if [ ! -d "$SKILL_REPO" ]; then
-  echo "Cloning miwrite.skill..."
-  git clone https://github.com/lcrxgzl-wq/miwrite.skill.git "$SKILL_REPO"
-fi
+has_local_skill_tree() {
+  local candidate="$1"
+  [ -n "$candidate" ] && [ -f "$candidate/AGENTS.md" ] && [ -d "$candidate/data-analysis" ] && [ -d "$candidate/lit-review" ]
+}
 
-# Copy AGENTS.md to project root (flat, self-contained, no imports)
+resolve_skill_repo() {
+  if has_local_skill_tree "${MIWRITE_SKILL_REPO:-}"; then
+    echo "$MIWRITE_SKILL_REPO"
+    return
+  fi
+
+  local script_source="${BASH_SOURCE[0]:-}"
+  if [ -n "$script_source" ] && [ "$script_source" != "bash" ]; then
+    local script_dir
+    script_dir="$(cd "$(dirname "$script_source")" && pwd)"
+    if has_local_skill_tree "$script_dir"; then
+      echo "$script_dir"
+      return
+    fi
+  fi
+
+  if [ -d "$CACHE_REPO/.git" ]; then
+    git -C "$CACHE_REPO" pull --ff-only >/dev/null 2>&1 || true
+  else
+    echo "Cloning miwrite.skill..."
+    git clone "$REPO_URL" "$CACHE_REPO"
+  fi
+
+  echo "$CACHE_REPO"
+}
+
+SKILL_REPO="$(resolve_skill_repo)"
+echo "Using skill source: $SKILL_REPO"
+
 if [ -f AGENTS.md ]; then
   echo "Existing AGENTS.md found. Backing up to AGENTS.md.bak"
   cp AGENTS.md AGENTS.md.bak
   echo "" >> AGENTS.md
-  echo "# --- miwrite academic writing skills ---" >> AGENTS.md
+  echo "# --- miwrite local skills ---" >> AGENTS.md
   cat "$SKILL_REPO/AGENTS.md" >> AGENTS.md
   echo "Appended miwrite rules to AGENTS.md"
 else
@@ -24,12 +52,9 @@ else
   echo "Copied AGENTS.md to project root"
 fi
 
-# Link src/skills/ for AGENTS.md path resolution
-if [ -d src/skills ]; then
-  echo "src/skills/ already exists, skipping link"
-else
-  ln -snf "$SKILL_REPO/src/skills" ./src/skills
-  echo "Linked src/skills/"
-fi
+mkdir -p .miwrite/skills
+for skill in data-analysis lit-review close-reading organize review polish socratic design-stress report-mode; do
+  ln -snf "$SKILL_REPO/$skill" ".miwrite/skills/$skill"
+done
 
-echo "Done. Codex/Cursor will read AGENTS.md from project root."
+echo "Done. Codex/Cursor will read local-only skills from project AGENTS.md and .miwrite/skills/."

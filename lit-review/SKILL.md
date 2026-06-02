@@ -1,48 +1,31 @@
 ---
 name: miwrite-lit
-description: 文献综述合成 — 多篇文献的结构化综述
+description: Local-only literature synthesis from user-provided notes, excerpts, and local files.
 status: active
-related_skills: [miwrite-read, miwrite-data]
-trigger_keywords: [文献综述, 综述, literature review, synthesis, meta-analysis]
 ---
 
-# 文献综述
+# Local Literature Review
 
-## 何时使用
+Use this skill when the user wants a structured synthesis of local literature material.
 
-用户有多篇文献的笔记、摘录或全文，需要合成一篇结构化综述。
+Local-only contract:
+- do not call hosted MCP
+- do not use API keys
+- do not use hosted knowledge search
+- do not invent references that are not in the local material
 
-## 输入
+Inputs:
+- local literature notes, excerpts, or PDFs converted to text
+- review topic if available
+- preferred organizing logic if available
 
-- **必需**：文献文本（input_text）+ 综述主题（topic）
-- **可选**：输出格式、额外要求、模型档位
+Workflow:
+1. identify the literature set actually present in local material
+2. extract claims, methods, objects, evidence, and limits from those sources
+3. organize the synthesis by question, concept, mechanism, method, or debate
+4. mark unsupported gaps instead of inventing external literature
 
-## 输出
-
-- 结构化综述报告（证据表、缺口分析、研究启发）
-- 引用验证状态标注（[已验证]/[未找到]/[未验证]）
-- [p.N] 页码锚点（PDF 来源）
-
-## 调用方式
-
-```bash
-curl -X POST https://miwrite.art/api/mcp/remote/rpc \
-  -H "Authorization: Bearer $MIWRITE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "tools/call",
-    "params": {
-      "name": "run_lit_review_pipeline",
-      "arguments": {
-        "input_text": "你的文献文本...",
-        "topic": "综述主题"
-      }
-    }
-  }'
-```
-
-## 引用验证
-
-输出中的每条引用会自动通过 Semantic Scholar API 验证。验证报告附在综述末尾。
+Output:
+- structured review draft
+- comparison matrix across the local literature set
+- concrete gap statement bounded by the supplied material

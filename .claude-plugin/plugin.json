@@ -1,7 +1,7 @@
 {
   "name": "miwrite-skills",
   "version": "1.0.0",
-  "description": "中文社科研究学术技能：资料分析、文献综述、文本精读、资料主线、稿件评阅、润色转写、研究设计压力测试、报告生成。内置方法论知识库，支持 MCP 远程调用和本地执行。",
+  "description": "Local-only Chinese social-science skills for Claude Code, Codex, and Cursor. No hosted MCP or hosted knowledge dependency.",
   "author": {
     "name": "miwrite",
     "url": "https://miwrite.art"
@@ -12,13 +12,10 @@
   "keywords": [
     "academic",
     "research",
-    "chinese",
+    "local-skills",
     "social-science",
-    "literature-review",
-    "data-analysis",
-    "qualitative",
-    "manuscript-review",
-    "polish",
-    "mcp"
+    "writing",
+    "review",
+    "analysis"
   ]
 }
