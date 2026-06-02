@@ -4,12 +4,34 @@
 
 ## 安装
 
-```bash
-# Claude Code CLI / VS Code / JetBrains
-/plugin install miwrite-skills
+### 方式一：自动加载（最简单）
 
-# 或手动安装（Cursor / 本地开发）
-git clone https://github.com/lcrxgzl-wq/miwrite.skill.git ~/.miwrite-skills
+```bash
+git clone https://github.com/lcrxgzl-wq/miwrite.skill.git /tmp/miwrite-skills
+mkdir -p ~/.claude/skills
+cp -r /tmp/miwrite-skills/skills/* ~/.claude/skills/
+rm -rf /tmp/miwrite-skills
+```
+
+重启 Claude Code，`/miwrite-data`、`/miwrite-lit` 等命令自动出现。
+
+### 方式二：CLI Marketplace
+
+```bash
+claude plugin marketplace add lcrxgzl-wq/miwrite.skill
+claude plugin install miwrite-skills@lcrxgzl-wq-miwrite-skill
+```
+
+### 方式三：本地目录
+
+```bash
+claude --plugin-dir /path/to/skills
+```
+
+### 方式四：MCP 协议（不装 Skills）
+
+```bash
+claude mcp add-json miwrite '{"type":"url","url":"https://miwrite.art/api/mcp/remote/rpc","headers":{"Authorization":"Bearer YOUR_API_KEY"}}'
 ```
 
 ## 技能列表
